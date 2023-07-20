@@ -1,0 +1,7 @@
+FROM python:3.10
+EXPOSE 3000
+WORKDIR /app
+COPY ./app/requeriments.txt requeriments.txt
+RUN pip install --no-cache-dir --upgrade -r requeriments.txt
+COPY ./app .
+CMD ["flask", "run"]

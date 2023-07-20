@@ -40,7 +40,17 @@ services:
             - db
         networks:
             - postgres
-
+    api:
+        build:
+            context: .
+            dockerfile: Dockerfile.api
+        ports:
+            - "3000:3000"
+        restart: always
+        depends_on:
+            - db
+        networks:
+            -  postgres
 networks:
   postgres:
     driver: bridge
