@@ -1,0 +1,50 @@
+version: "3.9"
+services:
+    web:
+        ports:
+            - "80:80"
+        volumes:
+            - ./WWW:/var/www/html
+        depends_on:
+            - db
+        restart: always
+        build: 
+            context: .
+            dockerfile: Dockerfile
+        networks:
+            - postgres
+    db:
+        container_name: phpDB
+        hostname: dev-postgres
+        image: postgres
+        restart: always
+        environment:
+            POSTGRES_USER: ${POSTGRES_USER:-postgres}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-passw0rd}
+            PGDATA: /var/lib/postgresql/data
+        volumes:
+            - data:/var/lib/postgresql/data
+            - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+        networks:
+            - postgres
+    pgadmin:
+        image: dpage/pgadmin4
+        environment:
+            PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@admin.com}
+            PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-passw0rd}
+        ports:
+            - "8081:80"
+        volumes:
+            - pgadmin:/var/lib/pgadmin
+        depends_on:
+            - db
+        networks:
+            - postgres
+
+networks:
+  postgres:
+    driver: bridge
+
+volumes:
+        data:
+        pgadmin:
